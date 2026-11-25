@@ -1,0 +1,139 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\oeis}[1]{\href{https://oeis.org/#1}{\texttt{#1}}}
+
+\title{First-Column Prefixes of Standard Young Tableaux:\\
+Kotesovec's Conjecture for OEIS A238802 Holds for Every $k$}
+
+\author{Le Duy Phuc\thanks{Email: \href{mailto:leduyphuc1702@gmail.com}{\texttt{leduyphuc1702@gmail.com}}}}
+\date{November 25, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Let $T(n,k)$ be the number of standard Young tableaux with $n$ cells whose first column begins with exactly the run $1,2,\dots,k$ (\oeis{A238802}; columns $k=2,\dots,8$ are \oeis{A238977}--\oeis{A239119}). In 2014 Vaclav Kotesovec conjectured, and checked for $k\le10$, that column $k$ is asymptotic to $\frac{\sqrt2}{2(k+1)(k-1)!}\,e^{\sqrt n-n/2-1/4}n^{n/2}\bigl(1+\frac7{24\sqrt n}\bigr)$. We prove, for every fixed $k\ge1$,
+\[
+ \frac{T(n,k)}{I_n}=\frac k{(k+1)!}\Bigl(1+\frac{(k^2-1)(k-3)}{3\,n^{3/2}}+O_k(n^{-2})\Bigr),
+\]
+where $I_n$ is the number of involutions, which gives the conjecture with error $O_k(1/n)$ inside the bracket. The cumulative version is equivalent to a special case of Jaggard's theorem on pattern containment in involutions (2005). Our proof is independent of it: we derive an exact finite formula and expand it with the asymptotic expansion of $I_n/I_{n-1}$, so the note gives a second derivation together with exhaustive checks.
+\end{abstract}
+
+\noindent\textbf{MSC 2020:} 05A16, 05E10, 05A05.\\
+\textbf{Keywords:} standard Young tableaux, involutions, Robinson--Schensted correspondence, ballot sequences, OEIS A238802, A239119.
+
+\section{Introduction}
+
+Let $I_n$ be the number of involutions of $[n]$ (\oeis{A000085}), $I_0=I_1=1$, $I_n=I_{n-1}+(n-1)I_{n-2}$. It is also the number of standard Young tableaux (SYT) with $n$ cells. For $0\le k\le n$ let $T(n,k)$ count the SYT whose first column starts with $1,\dots,k$ but not with $1,\dots,k+1$ (\oeis{A238802}, by Arndt and Heinz). The row sums are $I_n$, and $T(n,1)=I_n/2$ for $n\ge2$ by transposition. Kotesovec recorded the following conjecture in \oeis{A238802}, ``holds for all $k\le10$'', and stated the case $k=8$ in \oeis{A239119}:
+\[
+ T(n,k)\sim\frac{\sqrt2}{2(k+1)(k-1)!}\,e^{\sqrt n-n/2-1/4}\,n^{n/2}\Bigl(1+\frac7{24\sqrt n}\Bigr).
+\]
+
+\begin{theorem}\label{thm:main}
+For every fixed integer $k\ge1$, as $n\to\infty$,
+\[
+ \frac{T(n,k)}{I_n}=\frac k{(k+1)!}\Bigl(1+\frac{(k^2-1)(k-3)}{3\,n^{3/2}}+O_k(n^{-2})\Bigr).
+\]
+\end{theorem}
+
+Together with the classical expansion $I_n=\frac{1}{\sqrt2}n^{n/2}e^{\sqrt n-n/2-1/4}\bigl(1+\frac7{24\sqrt n}+O(n^{-1})\bigr)$ of Moser and Wyman \cite{MW} (see also \cite[\S5.1.4]{Knuth}), and $k/(k+1)!=1/((k+1)(k-1)!)$, this gives:
+
+\begin{corollary}
+Kotesovec's conjecture holds for every $k\ge1$, in the sharper form
+\[
+ T(n,k)=\frac{n^{n/2}e^{\sqrt n-n/2-1/4}}{\sqrt2\,(k+1)(k-1)!}\Bigl(1+\frac7{24\sqrt n}+O_k(n^{-1})\Bigr).
+\]
+\end{corollary}
+
+Note that the term $\frac7{24\sqrt n}$ comes entirely from $I_n$; the $k$-dependence enters only at relative order $n^{-3/2}$, and vanishes there for $k=1$ and $k=3$.
+
+\paragraph{Relation to Jaggard's theorem.} Let $B(n,k)=\sum_{j\ge k}T(n,j)$ count SYT whose first column begins with $1,\dots,k$. Lemma~\ref{lem:RS} below shows that $B(n,k)/I_n$ is the probability that a uniform involution contains the decreasing pattern of length $k$ on the values $1,\dots,k$. Jaggard \cite{Jaggard} proved, for patterns of length $k>2$ whose first three values form an involution pattern, that this probability is $\frac1{k!}+\frac{n^{-3/2}}{3(k-3)!}+O(n^{-2})$, which is Proposition~\ref{prop:B}. Theorem~\ref{thm:main} then follows by subtraction. We give an independent proof of Proposition~\ref{prop:B}, so that the result rests on two derivations.
+
+\section{An exact formula}
+
+\begin{lemma}\label{lem:RS}
+$B(n,k)$ equals the number of involutions $w$ of $[n]$ with $w(1)>w(2)>\dots>w(k)$.
+\end{lemma}
+
+\begin{proof}
+The Robinson--Schensted correspondence restricts to a bijection $w\mapsto P(w)$ between involutions and SYT \cite{Schensted,Knuth}. Inserting a letter larger than $k$ never moves an entry $\le k$, so the entries $\le k$ of $P(w)$ form the insertion tableau of the subword of $w(1)\cdots w(n)$ consisting of the letters $\le k$. By Schensted's theorem this tableau is a single column iff that subword is decreasing, i.e.\ iff $w^{-1}(1)>\dots>w^{-1}(k)$. For an involution $w^{-1}=w$.
+\end{proof}
+
+\begin{lemma}\label{lem:formula}
+For $1\le k\le n$, $\displaystyle B(n,k)=\sum_{j=0}^{\min(k,n-k)}\binom{n-k}{j}I_{n-k-j}$, and $T(n,k)=B(n,k)-B(n,k+1)$ (with $B(n,n+1)=0$).
+\end{lemma}
+
+\begin{proof}
+Let $w$ be an involution with $w(1)>\dots>w(k)$, and let $j$ be the number of $i\le k$ with $w(i)>k$. Since $w$ is decreasing on $[k]$, these are $i=1,\dots,j$, and $w(1),\dots,w(j)$ is a decreasing arrangement of a $j$-subset of $\{k+1,\dots,n\}$: $\binom{n-k}j$ choices. For $j<i\le k$ we have $w(i)\le k$, and $w(i)>j$ since $w(w(i))=i\le k$. So $w$ restricts to a decreasing involution of $\{j+1,\dots,k\}$, which must be the reversal, and it is an involution. The remaining $n-k-j$ points form an arbitrary involution. Conversely each such choice gives a valid $w$.
+\end{proof}
+
+\section{Asymptotics}
+
+Let $\rho_m=I_m/I_{m-1}$. By the recurrence, $\rho_m\rho_{m-1}=\rho_{m-1}+m-1$. The Moser--Wyman expansion of $I_m$ in powers of $m^{-1/2}$ \cite{MW} implies that $\rho_m/\sqrt m$ has an asymptotic expansion in powers of $m^{-1/2}$. Its coefficients are uniquely determined by substituting into the recurrence:
+\[
+ \frac{\rho_m}{\sqrt m}=1+\frac{1}{2}m^{-1/2}-\frac18m^{-1}-\frac18m^{-3/2}+\frac7{128}m^{-2}-\frac1{32}m^{-5/2}+O(m^{-3}).
+\]
+For fixed $k$ and $0\le d\le3$, the $(k-d)$-th term of Lemma~\ref{lem:formula} equals
+\[
+ \binom{n-k}{k-d}\frac{I_{n-2k+d}}{I_n}=\binom{n-k}{k-d}\prod_{i=0}^{2k-d-1}\frac1{\rho_{n-i}},
+\]
+and expanding each factor gives, with $\epsilon=n^{-1/2}$ and polynomials in $k$ computed symbolically,
+\begin{align*}
+ d=0:&\quad \frac{\epsilon^0}{k!}\Bigl(1-k\epsilon+\frac k2\epsilon^2+\frac{k(8k^2-24k+7)}{24}\epsilon^3+O(\epsilon^4)\Bigr),\\
+ d=1:&\quad \frac{\epsilon^1}{(k-1)!}\Bigl(1-\frac{2k-1}2\epsilon+\frac{8k-5}8\epsilon^2+O(\epsilon^3)\Bigr),\\
+ d=2:&\quad \frac{\epsilon^2}{(k-2)!}\bigl(1+(1-k)\epsilon+O(\epsilon^2)\bigr),\\
+ d=3:&\quad \frac{\epsilon^3}{(k-3)!}\bigl(1+O(\epsilon)\bigr).
+\end{align*}
+Terms with $d\ge4$ are $O_k(\epsilon^4)$. (For $k<3$ the absent terms correspond to $1/(k-d)!=0$.) Multiplying by $k!$ and adding, the coefficient of $\epsilon$ is $-k+k=0$, that of $\epsilon^2$ is $\frac k2-\frac{k(2k-1)}2+k(k-1)=0$, and that of $\epsilon^3$ is
+\[
+ k\Bigl[\frac{8k^2-24k+7}{24}+\frac{8k-5}8-(k-1)^2+(k-1)(k-2)\Bigr]=k\Bigl[\frac{k^2-1}3-(k-1)\Bigr]=\frac{k(k-1)(k-2)}3 .
+\]
+
+\begin{proposition}\label{prop:B}
+For every fixed $k\ge1$, $\displaystyle\frac{B(n,k)}{I_n}=\frac1{k!}\Bigl(1+\frac{k(k-1)(k-2)}{3\,n^{3/2}}+O_k(n^{-2})\Bigr)$.
+\end{proposition}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+By Lemma~\ref{lem:formula} and Proposition~\ref{prop:B},
+\[
+ \frac{T(n,k)}{I_n}=\frac1{k!}-\frac1{(k+1)!}+\Bigl(\frac{k(k-1)(k-2)}{3\,k!}-\frac{(k+1)k(k-1)}{3\,(k+1)!}\Bigr)n^{-3/2}+O_k(n^{-2}),
+\]
+and the bracket equals $\frac{k(k-1)(k-3)}{3\,k!}=\frac k{(k+1)!}\cdot\frac{(k^2-1)(k-3)}3$.
+\end{proof}
+
+\section{Verification}
+
+The script \texttt{verify\_a238802.py} performs four independent checks.
+\begin{enumerate}
+\item It enumerates all SYT with at most $13$ cells by adding one cell at a time It reproduces all $78$ terms in the data section of \oeis{A238802} (rows $n\le11$), and $B(n,k)-B(n,k+1)$ from Lemma~\ref{lem:formula} for every $n\le13$.
+\item It enumerates all involutions of $[n]$, $n\le9$, and confirms Lemma~\ref{lem:RS} combined with Lemma~\ref{lem:formula}.
+\item It derives the expansion of $\rho_m$ from the recurrence and the four series above with $k$ as a symbol, and confirms the sum.
+\item With exact integers up to $n=20000$ it checks that $n^{3/2}\bigl(\frac{(k+1)!}{k}\frac{T(n,k)}{I_n}-1\bigr)-\frac{(k^2-1)(k-3)}3$ decays like $n^{-1/2}$ for $k\in\{1,2,3,4,8,10,12\}$; for $k=1$ it vanishes identically.
+\end{enumerate}
+
+\section*{Acknowledgements}
+The triangle is due to J\"org Arndt and Alois P.~Heinz and the conjecture to Vaclav Kotesovec. Parts of the derivation and code were developed with AI assistance; all statements were checked by the author and all computations are reproducible with the accompanying script.
+
+\begin{thebibliography}{9}
+\bibitem{OEIS} OEIS Foundation Inc., \emph{The On-Line Encyclopedia of Integer Sequences}, \url{https://oeis.org}; entries A238802, A239119, A000085.
+\bibitem{Jaggard} A. D. Jaggard, Subsequence containment by involutions, \emph{Electron. J. Combin.} \textbf{12} (2005), \#R14, \href{https://doi.org/10.37236/1911}{doi:10.37236/1911}.
+\bibitem{MW} L. Moser and M. Wyman, On solutions of $x^d=1$ in symmetric groups, \emph{Canad. J. Math.} \textbf{7} (1955), 159--168.
+\bibitem{Knuth} D. E. Knuth, \emph{The Art of Computer Programming}, Vol.~3, 2nd ed., Addison-Wesley, 1998, \S5.1.4.
+\bibitem{Schensted} C. Schensted, Longest increasing and decreasing subsequences, \emph{Canad. J. Math.} \textbf{13} (1961), 179--191.
+\end{thebibliography}
+
+\end{document}
